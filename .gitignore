@@ -1,5 +1,5 @@
 # Built application files
-*.apk
+# *.apk # commented out for bitrise testing
 *.ap_
 
 # Built libraries
