@@ -1,6 +1,7 @@
 package cash.z.android.wallet.ui.fragment
 
 import android.os.Bundle
+import cash.z.android.wallet.ui.activity.MainActivity
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,6 +11,8 @@ import kotlin.coroutines.CoroutineContext
 abstract class BaseFragment : DaggerFragment(), CoroutineScope {
 
     private lateinit var job: Job
+
+    val mainActivity get() = activity as MainActivity
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main

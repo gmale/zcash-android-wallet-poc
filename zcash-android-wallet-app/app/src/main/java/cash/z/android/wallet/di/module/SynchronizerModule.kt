@@ -68,9 +68,10 @@ internal object SynchronizerModule {
         downloader: CompactBlockStream,
         processor: CompactBlockProcessor,
         repository: TransactionRepository,
+        wallet: Wallet,
         twigger: Twig
     ): Synchronizer {
-        return Synchronizer(downloader, processor, repository, twigger)
+        return Synchronizer(downloader, processor, repository, wallet, twigger)
     }
 
 }

@@ -22,21 +22,25 @@ class HomePresenter(
     interface HomeView : PresenterView {
         fun addTransaction(transaction: WalletTransaction)
         fun updateBalance(old: Long, new: Long)
+        fun showProgress(progress: Int)
     }
 
     private lateinit var balanceJob: Job
     private lateinit var transactionJob: Job
+    private lateinit var progressJob: Job
 
     override suspend fun start() {
         with(view) {
             balanceJob = launchBalanceBinder(synchronizer.repository.balance())
             transactionJob = launchTransactionBinder(synchronizer.repository.transactions().map { it.toWalletTransaction() })
+            progressJob = launchProgressMonitor(synchronizer.downloader.progress())
         }
     }
 
     override fun stop() {
         balanceJob.cancel()
         transactionJob.cancel()
+        progressJob.cancel()
     }
 
     fun CoroutineScope.launchBalanceBinder(channel: ReceiveChannel<Long>) = launch {
@@ -52,12 +56,22 @@ class HomePresenter(
         }
     }
 
+    fun CoroutineScope.launchProgressMonitor(channel: ReceiveChannel<Int>) = launch {
+        for (i in channel) {
+            bind(i)
+        }
+    }
+
     fun bind(new: Long, old: Long?) {
         view.updateBalance(new, old ?: 0L)
     }
 
     fun bind(transaction: WalletTransaction) {
         view.addTransaction(transaction)
+    }
+
+    fun bind(progress: Int) {
+        view.showProgress(progress)
     }
 
     private fun NoteQuery.toWalletTransaction(): WalletTransaction {

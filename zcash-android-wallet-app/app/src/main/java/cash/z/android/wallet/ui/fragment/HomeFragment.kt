@@ -41,11 +41,6 @@ class HomeFragment : BaseFragment(), HomePresenter.HomeView {
     lateinit var homePresenter: HomePresenter
     lateinit var transactionAdapter: TransactionAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        homePresenter = HomePresenter(this, (activity as MainActivity).synchronizer)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -81,6 +76,7 @@ class HomeFragment : BaseFragment(), HomePresenter.HomeView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        homePresenter = HomePresenter(this, mainActivity.synchronizer)
         initFab(activity!!)
 
         recycler_transactions.apply {
@@ -107,6 +103,11 @@ class HomeFragment : BaseFragment(), HomePresenter.HomeView {
     override fun addTransaction(transaction: WalletTransaction) {
         transactionAdapter.add(transaction)
         recycler_transactions.smoothScrollToPosition(0)
+    }
+
+    override fun showProgress(progress: Int) {
+        val message = if(progress >=  100) "Download complete!" else "Downloading blocks ($progress%)"
+        text_wallet_message.text = message
     }
 
     //
